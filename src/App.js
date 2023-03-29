@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { BrowserRouter,Switch,Route, withRouter } from 'react-router-dom'
+import NavBar from './components/NavBar'
+import Cart from './Pages/Cart'
+import Home from './Pages/Home'
+import './App.css'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import ProductDetails from './Pages/ProductDetails'
+
+
+
+
+export class App extends Component {
+  render() {
+    return (
+      <div>
+        <NavBar />
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/details/:id" component={ProductDetails} />
+          <Route exact path="/cart" component={Cart} />
+        </Switch>
+       
+      </div>
+    )
+  }
 }
 
-export default App;
+
+export default withRouter(App)
