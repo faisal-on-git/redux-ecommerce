@@ -5,6 +5,7 @@ import PriceTag from "../components/PriceTag";
 import { Box } from "@mui/system";
 import { connect } from "react-redux";
 import { addToCart,removeFromCart } from "../redux/actions/cartActions";
+import {apiInstance} from "../utils/api"
 
 
 
@@ -17,15 +18,14 @@ handleAddToCart=()=>{
 }
   componentDidMount() {
     console.log(this.props.match.params.id, "id");
-    axios
-      .get(`https://fakestoreapi.com/products/${this.props.match.params.id}`)
-      .then((res) => {
-        console.log(res.data);
-        this.setState({ product: res.data });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    apiInstance.get(`products/${this.props.match.params.id}`)
+    .then((res) => {
+      console.log(res.data);
+      this.setState({ product: res.data });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
   render() {
     // console.log(this.state.product.rating?.rate, "product")
