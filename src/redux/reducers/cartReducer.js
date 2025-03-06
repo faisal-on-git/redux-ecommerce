@@ -1,3 +1,5 @@
+import { CART_ACTIONS } from "../actions/cartActions";
+
 const initialState = {
   products: [],
   totalCount: 0,
@@ -5,7 +7,7 @@ const initialState = {
 
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "ADD_TO_CART":
+    case CART_ACTIONS.ADD_TO_CART:
       const item = action.payload;
       const existItem = state.products.find((x) => x.id === item.id);
       if (existItem) {
@@ -24,7 +26,7 @@ const cartReducer = (state = initialState, action) => {
         };
       }
 
-    case "REMOVE_FROM_CART":
+    case CART_ACTIONS.REMOVE_FROM_CART:
       const itemId = action.payload.id;
       const itemToRemove = state.products.find((x) => x.id === itemId);
       if (itemToRemove.quantity === 1) {
@@ -46,8 +48,32 @@ const cartReducer = (state = initialState, action) => {
         };
       }
 
+    case CART_ACTIONS.CLEAR_CART:
+      return {
+        ...state,
+        products: [],
+        totalCount: 0,
+      };
+
+    case CART_ACTIONS.UPDATE_QUANTITY:
+      const { productId, quantity } = action.payload;
+      const targetItem = state.products.find((x) => x.id === productId);
+
+      if (!targetItem) return state;
+
+      const quantityDiff = quantity - targetItem.quantity;
+
+      return {
+        ...state,
+        products: state.products.map((x) =>
+          x.id === productId ? { ...x, quantity } : x
+        ),
+        totalCount: state.totalCount + quantityDiff,
+      };
+
     default:
       return state;
   }
 };
+
 export default cartReducer;

@@ -1,62 +1,52 @@
-import { Box } from '@mui/material'
-import axios from 'axios'
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { withRouter } from 'react-router-dom'
+import { Box, CircularProgress, Typography } from '@mui/material'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useHistory } from 'react-router-dom'
 import ItemCard from '../components/ItemCard'
-import { setProducts,fetchProducts } from '../redux/actions/productAction'
+import { fetchProducts } from '../redux/actions/productAction'
 // import { getProducts ,setProducts} from '../features/productSlice'
 
+const Home = () => {
+  const dispatch = useDispatch()
+  const history = useHistory()
+  const { products, loading, error } = useSelector(state => state.productReducer)
 
+  useEffect(() => {
+    dispatch(fetchProducts())
+  }, [dispatch])
 
-
-
-
-export class Home extends Component {
-
-  componentDidMount() {
-    // axios.get('https://fakestoreapi.com/products')
-
-    //   .then(res => {
-    //     console.log(res.data)
-    //     this.props.setProducts(res.data)
-    //     console.log(this.props.products,'products')
-    //     console.log(this.props,'props')
-      
-    //   })
-    //   .catch(err => {
-    //     console.log(err)
-    //   })
-    this.props.fetchProducts()
-
-  }
-
-
-  render() {
+  if (loading) {
     return (
-      <Box sx={{display:'flex',flexWrap:'wrap',justifyContent:'center'}}>
-        {this.props?.products?.map((product) => (
-          <ItemCard product={product} key={product.id} />
-        ))}
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <CircularProgress />
       </Box>
-
     )
   }
+
+  if (error) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <Typography color="error" variant="h6">
+          Error: {error}
+        </Typography>
+      </Box>
+    )
+  }
+
+  return (
+    <Box sx={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+      padding: '20px',
+      gap: '20px',
+      backgroundColor: '#f5f5f5'
+    }}>
+      {products?.map((product) => (
+        <ItemCard product={product} key={product.id} />
+      ))}
+    </Box>
+  )
 }
 
-const mapStateToProps = (state) => ({
-  
-  products: state.productReducer.products,
-}
-
-)
-
-const mapDispatchToProps = (dispatch) => ({
-  // getProducts: () => dispatch(getProducts()),
-  setProducts: (products) => dispatch(setProducts(products)),
-  fetchProducts: () => dispatch(fetchProducts())
-})
-
-const HomeWithRouter=withRouter(Home)
-
-export default connect(mapStateToProps, mapDispatchToProps)( HomeWithRouter)
+export default Home

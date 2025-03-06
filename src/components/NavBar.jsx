@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -12,14 +12,10 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import MoreIcon from '@mui/icons-material/MoreVert';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { Link, withRouter } from 'react-router-dom';
+import MoreIcon from '@mui/icons-material/MoreVert';
+import { Link, useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
-
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -51,7 +47,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     width: '100%',
@@ -61,11 +56,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
- function PrimarySearchAppBar() {
-    const total = useSelector(state => state.cartReducer?.totalCount)
-    console.log(total,'total from navbar')
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+const NavBar = () => {
+  const totalCount = useSelector(state => state.cartReducer?.totalCount);
+  const history = useHistory();
+  
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -85,6 +81,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
+  };
+  
+  const navigateToHome = () => {
+    history.push('/');
+  };
+
+  const navigateToCart = () => {
+    history.push('/cart');
   };
 
   const menuId = 'primary-search-account-menu';
@@ -126,13 +130,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={total} color="error">
-          <ShoppingCartIcon /> 
+      <MenuItem onClick={navigateToCart}>
+        <IconButton size="large" aria-label="show cart items" color="inherit">
+          <Badge badgeContent={totalCount} color="error">
+            <ShoppingCartIcon /> 
           </Badge>
         </IconButton>
-        <p>Cart Items</p>
+        <p>Cart</p>
       </MenuItem>
      
       <MenuItem onClick={handleProfileMenuOpen}>
@@ -152,7 +156,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar 
+        position="static" 
+        sx={{ 
+          backgroundColor: '#2c3e50',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        }}
+      >
         <Toolbar>
           <IconButton
             size="large"
@@ -163,32 +173,33 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
           >
             <MenuIcon />
           </IconButton>
+          
           <Typography
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-            
+            sx={{ 
+              display: { xs: 'none', sm: 'block' },
+              fontWeight: 'bold',
+              letterSpacing: '1px',
+              cursor: 'pointer'
+            }}
+            onClick={navigateToHome}
           >
-            <Link to="/" style={{textDecoration:'none',color:'white'}}>e-store</Link>
-            
+            E-STORE
           </Typography>
-          {/* <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search> */}
+          
           <Box sx={{ flexGrow: 1 }} />
+          
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={total} color="error">
-                <Link to="/cart" style={{textDecoration:'none',color:'white'}}>
+            <IconButton 
+              size="large" 
+              aria-label={`show ${totalCount} cart items`} 
+              color="inherit"
+              onClick={navigateToCart}
+            >
+              <Badge badgeContent={totalCount} color="error">
                 <ShoppingCartIcon />
-                </Link>
               </Badge>
             </IconButton>
             
@@ -204,6 +215,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
               <AccountCircle />
             </IconButton>
           </Box>
+          
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -222,5 +234,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       {renderMenu}
     </Box>
   );
-}
-export default withRouter(PrimarySearchAppBar);
+};
+
+export default NavBar;
