@@ -34,18 +34,26 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // Enhanced Redux DevTools setup
+// const composeEnhancers =
+//     typeof window === 'object' &&
+//         window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+//         window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+//             trace: true, // Adds stack trace to action logs
+//             // traceLimit: 25 // Maximum stack trace frames to be stored
+//         }) : compose;
+
 const composeEnhancers =
-    typeof window === 'object' &&
-        window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
-        window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-            // Specify extension's options like name, actionsBlacklist, actionsCreators, serialize...
-            trace: true, // Adds stack trace to action logs
-            traceLimit: 25 // Maximum stack trace frames to be stored
-        }) : compose;
+  typeof window === 'object' &&
+  process.env.NODE_ENV !== 'production' &&
+  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+        trace: true, // Adds stack trace to action logs
+      })
+    : compose;
 
 const store = createStore(
     persistedReducer,
-    composeEnhancers(applyMiddleware(thunk))
+    composeEnhancers(applyMiddleware(thunk)) // passed thunk as we are using thunk middleware for async actions
 );
 
 export const persistor = persistStore(store);
