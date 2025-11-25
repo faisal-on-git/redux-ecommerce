@@ -26,7 +26,19 @@ const ItemCard = ({ product }) => {
   const handleAddToCart = (e) => {
     e.stopPropagation();
     dispatch(addToCart(product));
+    console.log("Added to cart", product);
   };
+
+  const handleAsyncAddToCart = async (e) => {
+
+    e.stopPropagation();
+    setTimeout(() => {
+      dispatch(addToCart(product));
+      console.log("Added to cart", product);
+    }, 1000);
+    console.log("Added to cart", product);
+
+  }
   
   // Format price with commas for thousands
   const formatPrice = (price) => {

@@ -13,7 +13,6 @@ const ProductDetails = () => {
   
   const dispatch = useDispatch();
   const { id } = useParams();
-  const cartProducts = useSelector(state => state.cartReducer.products);
   
   useEffect(() => {
     const loadProduct = async () => {
