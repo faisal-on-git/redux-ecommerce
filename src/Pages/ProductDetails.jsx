@@ -53,7 +53,7 @@ const ProductDetails = () => {
     );
   }
   
-  const ratingValue = Math.floor(product.rating?.rate) || 0;
+  const ratingValue = Math.floor(product.rating?.value) || 0;
   
   return (
     <div>
